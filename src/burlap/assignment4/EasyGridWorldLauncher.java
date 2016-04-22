@@ -15,7 +15,7 @@ import burlap.oomdp.visualizer.Visualizer;
 
 public class EasyGridWorldLauncher {
 	//These are some boolean variables that affect what will actually get executed
-	private static boolean visualizeInitialGridWorld = true; //Loads a GUI with the agent, walls, and goal
+	private static boolean visualizeInitialGridWorld = false; //Loads a GUI with the agent, walls, and goal
 	
 	//runValueIteration, runPolicyIteration, and runQLearning indicate which algorithms will run in the experiment
 	private static boolean runValueIteration = true; 
@@ -25,7 +25,7 @@ public class EasyGridWorldLauncher {
 	//showValueIterationPolicyMap, showPolicyIterationPolicyMap, and showQLearningPolicyMap will open a GUI
 	//you can use to visualize the policy maps. Consider only having one variable set to true at a time
 	//since the pop-up window does not indicate what algorithm was used to generate the map.
-	private static boolean showValueIterationPolicyMap = true; 
+	private static boolean showValueIterationPolicyMap = false;
 	private static boolean showPolicyIterationPolicyMap = false;
 	private static boolean showQLearningPolicyMap = false;
 	
@@ -66,17 +66,26 @@ public class EasyGridWorldLauncher {
 			visualizeInitialGridWorld(domain, gen, env);
 		}
 		
-		AnalysisRunner runner = new AnalysisRunner(MAX_ITERATIONS,NUM_INTERVALS);
+		AnalysisRunner runner = new AnalysisRunner(MAX_ITERATIONS,NUM_INTERVALS, -1);
+		long startTime = System.nanoTime();
 		if(runValueIteration){
 			runner.runValueIteration(gen,domain,initialState, rf, tf, showValueIterationPolicyMap);
 		}
+		long viTime = System.nanoTime();
 		if(runPolicyIteration){
 			runner.runPolicyIteration(gen,domain,initialState, rf, tf, showPolicyIterationPolicyMap);
 		}
+		long piTime = System.nanoTime();
 		if(runQLearning){
 			runner.runQLearning(gen,domain,initialState, rf, tf, env, showQLearningPolicyMap);
 		}
+		long qlTime = System.nanoTime();
 		AnalysisAggregator.printAggregateAnalysis();
+
+		System.out.println("Value Iteration clock time: " + (viTime - startTime));
+		System.out.println("Policy Iteration clock time: " + (piTime - viTime));
+		System.out.println("Q learning clock time: " + (qlTime - piTime));
+		AnalysisAggregator.printAggregateAnalysisLongForm();
 	}
 
 

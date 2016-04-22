@@ -1,49 +1,15 @@
 package burlap.assignment4;
 
-import burlap.behavior.policy.GreedyQPolicy;
-import burlap.behavior.policy.Policy;
-import burlap.behavior.singleagent.EpisodeAnalysis;
-import burlap.behavior.singleagent.auxiliary.EpisodeSequenceVisualizer;
-import burlap.behavior.singleagent.auxiliary.StateReachability;
-import burlap.behavior.singleagent.auxiliary.performance.LearningAlgorithmExperimenter;
-import burlap.behavior.singleagent.auxiliary.performance.PerformanceMetric;
-import burlap.behavior.singleagent.auxiliary.performance.TrialMode;
-import burlap.behavior.singleagent.auxiliary.valuefunctionvis.ValueFunctionVisualizerGUI;
-import burlap.behavior.singleagent.auxiliary.valuefunctionvis.common.ArrowActionGlyph;
-import burlap.behavior.singleagent.auxiliary.valuefunctionvis.common.LandmarkColorBlendInterpolation;
-import burlap.behavior.singleagent.auxiliary.valuefunctionvis.common.PolicyGlyphPainter2D;
-import burlap.behavior.singleagent.auxiliary.valuefunctionvis.common.StateValuePainter2D;
-import burlap.behavior.singleagent.learning.LearningAgent;
-import burlap.behavior.singleagent.learning.LearningAgentFactory;
-import burlap.behavior.singleagent.learning.tdmethods.QLearning;
-import burlap.behavior.singleagent.learning.tdmethods.SarsaLam;
-import burlap.behavior.singleagent.planning.Planner;
-import burlap.behavior.singleagent.planning.deterministic.DeterministicPlanner;
-import burlap.behavior.singleagent.planning.deterministic.informed.Heuristic;
-import burlap.behavior.singleagent.planning.deterministic.informed.astar.AStar;
-import burlap.behavior.singleagent.planning.deterministic.uninformed.bfs.BFS;
-import burlap.behavior.singleagent.planning.deterministic.uninformed.dfs.DFS;
-import burlap.behavior.singleagent.planning.stochastic.valueiteration.ValueIteration;
-import burlap.behavior.valuefunction.QFunction;
-import burlap.behavior.valuefunction.ValueFunction;
-import burlap.domain.singleagent.gridworld.*;
-import burlap.oomdp.auxiliary.common.SinglePFTF;
-import burlap.oomdp.auxiliary.stateconditiontest.StateConditionTest;
-import burlap.oomdp.auxiliary.stateconditiontest.TFGoalCondition;
+import burlap.assignment4.util.AnalysisAggregator;
+import burlap.assignment4.util.AnalysisRunner;
+import burlap.assignment4.util.BasicTerminalFunction;
+import burlap.assignment4.util.MapPrinter;
+import burlap.domain.singleagent.gridworld.GridWorldRewardFunction;
 import burlap.oomdp.core.Domain;
 import burlap.oomdp.core.TerminalFunction;
-import burlap.oomdp.core.objects.ObjectInstance;
 import burlap.oomdp.core.states.State;
-import burlap.oomdp.singleagent.RewardFunction;
-import burlap.oomdp.singleagent.SADomain;
-import burlap.oomdp.singleagent.common.GoalBasedRF;
-import burlap.oomdp.singleagent.common.UniformCostRF;
-import burlap.oomdp.singleagent.common.VisualActionObserver;
-import burlap.oomdp.singleagent.environment.Environment;
-import burlap.oomdp.singleagent.environment.EnvironmentServer;
 import burlap.oomdp.singleagent.environment.SimulatedEnvironment;
-import burlap.oomdp.statehashing.HashableStateFactory;
-import burlap.oomdp.statehashing.SimpleHashableStateFactory;
+import burlap.oomdp.singleagent.explorer.VisualExplorer;
 import burlap.oomdp.visualizer.Visualizer;
 
 import java.util.Arrays;
@@ -51,86 +17,120 @@ import java.util.Arrays;
 
 public class DizzyCommando {
 
-    int width;
-    int height;
-    double probSucceed;
+    //These are some boolean variables that affect what will actually get executed
+    private static boolean visualizeInitialGridWorld = false; //Loads a GUI with the agent, walls, and goal
 
-    GridWorldDomain gwdg;
-    Domain domain;
-    GridWorldRewardFunction rf;
-    TerminalFunction tf;
-    StateConditionTest goalCondition;
-    State initialState;
-    HashableStateFactory hashingFactory;
-    Environment env;
+    //runValueIteration, runPolicyIteration, and runQLearning indicate which algorithms will run in the experiment
+    private static boolean runValueIteration = true;
+    private static boolean runPolicyIteration = true;
+    private static boolean runQLearning = true;
 
-    protected int[][] userMap;
+    //showValueIterationPolicyMap, showPolicyIterationPolicyMap, and showQLearningPolicyMap will open a GUI
+    //you can use to visualize the policy maps. Consider only having one variable set to true at a time
+    //since the pop-up window does not indicate what algorithm was used to generate the map.
+    private static boolean showValueIterationPolicyMap = false;
+    private static boolean showPolicyIterationPolicyMap = false;
+    private static boolean showQLearningPolicyMap = false;
 
-    public DizzyCommando() {
+    private static Integer MAX_ITERATIONS = 100;
+    private static Integer NUM_INTERVALS = 100;
 
-        width = 21;
-        height = 21;
-        probSucceed = .8;
+    public static void main(String[] args) {
+        int width = 15;
+        int height = 15;
 
-        userMap = new int[width][height];
+        int [][] userMap = new int[width][height];
         for (int[] row: userMap) {
             Arrays.fill(row,0);
         }
 
-        gwdg = new GridWorldDomain(width, height);
-        gwdg.setProbSucceedTransitionDynamics(probSucceed);
-        domain = gwdg.generateDomain();
+        int[][] map = MapPrinter.mapToMatrix(userMap);
+        int maxX = map.length-1;
+        int maxY = map[0].length-1;
 
-        rf = new GridWorldRewardFunction(width, height, -1);
-        placeLightAt(11, 11, 5);
+        BasicGridWorld gen = new BasicGridWorld(userMap,maxX,maxY);
+        Domain domain = gen.generateDomain();
 
-        tf = new GridWorldTerminalFunction(11, 20);
-        goalCondition = new TFGoalCondition(tf);
+        State initialState = BasicGridWorld.getExampleState(domain);
 
-        initialState = GridWorldDomain.getOneAgentOneLocationState(domain);
-        GridWorldDomain.setAgent(initialState,11,0);
+        GridWorldRewardFunction rf = new GridWorldRewardFunction(width, height, -1);
+        placeLightAt(rf, 7, 7, 4);
+        placeLightAt(rf, 0, 14, 4);
+        placeLightAt(rf, 14, 0, 4);
 
-        hashingFactory = new SimpleHashableStateFactory();
+        TerminalFunction tf = new BasicTerminalFunction(maxX,maxY); //Goal is at the top right grid
 
-        env = new SimulatedEnvironment(domain, rf, tf, initialState);
+        SimulatedEnvironment env = new SimulatedEnvironment(domain, rf, tf,
+                initialState);
 
+        if (visualizeInitialGridWorld) {
+            visualizeInitialGridWorld(domain, gen, env);
+        }
+        AnalysisRunner runner = new AnalysisRunner(MAX_ITERATIONS,NUM_INTERVALS, -1);
+        long startTime = System.nanoTime();
+        if(runValueIteration){
+            runner.runValueIteration(gen,domain,initialState, rf, tf, showValueIterationPolicyMap);
+        }
+        long viTime = System.nanoTime();
+        if(runPolicyIteration){
+            runner.runPolicyIteration(gen,domain,initialState, rf, tf, showPolicyIterationPolicyMap);
+        }
+        long piTime = System.nanoTime();
+        if(runQLearning){
+            runner.runQLearning(gen,domain,initialState, rf, tf, env, showQLearningPolicyMap);
+        }
+        long qlTime = System.nanoTime();
+        AnalysisAggregator.printAggregateAnalysis();
+
+        double[][] rewards = rf.getRewardMatrix();
+        System.out.println("Reward matrix");
+        for(int i = height - 1; i >= 0; i--){
+            StringBuffer lineOut = new StringBuffer();
+            for (int j = 0; j < width; j++){
+                lineOut.append(Double.toString(rewards[j][i]));
+                if (j < width - 1){
+                    lineOut.append(", ");
+                }
+            }
+            System.out.println(lineOut);
+        }
+
+        System.out.println("Value Iteration clock time: " + (viTime - startTime));
+        System.out.println("Policy Iteration clock time: " + (piTime - viTime));
+        System.out.println("Q learning clock time: " + (qlTime - piTime));
+
+        AnalysisAggregator.printAggregateAnalysisLongForm();
     }
 
-    public void valueIterationExample(String outputPath){
-        Planner planner = new ValueIteration(domain, rf, tf, 0.99, hashingFactory, .001, 100);
-        Policy p = planner.planFromState(initialState);
-        p.evaluateBehavior(initialState, rf, tf).writeToFile(outputPath + "vi");
-    }
-
-    public void visualize(String outputPath){
-        Visualizer v = GridWorldVisualizer.getVisualizer(gwdg.getMap());
-        new EpisodeSequenceVisualizer(v, domain, outputPath);
-    }
-
-    public static void main(String[] args) {
-
-        DizzyCommando example = new DizzyCommando();
-        String outputPath = "output/";
-
-        example.valueIterationExample(outputPath);
-
-        example.visualize(outputPath);
-    }
-
-    private void placeLightAt(int x, int y, int brightness) {
+    private static void placeLightAt(GridWorldRewardFunction rf, int x, int y, int brightness) {
         //placing a light gives a reward of (taxicab distance from light - brightness)
         //with a maximum reward of zero.  Rewards from overlapping lights are added
         double[][] rewards = rf.getRewardMatrix();
-        for (int dx = -brightness + 1; dx < brightness; dx++) {
-            for (int dy = -brightness + 1; dy < brightness; dy++) {
+        int width = rewards.length;
+        int height = rewards[0].length;
+        for (int dx = -brightness + 1; dx <= brightness; dx++) {
+            for (int dy = -brightness + 1; dy <= brightness; dy++) {
                 int calcX = dx + x;
                 int calcY = dy + y;
-                if (calcX > 0 && calcX < width && calcY > 0 && calcY < width) {
+                if (calcX >= 0 && calcX < width && calcY >= 0 && calcY < height) {
                     int taxicabDistance = Math.abs(dx) + Math.abs(dy);
-                    rewards[calcX][calcY] += (double) Math.max(taxicabDistance - brightness, 0);
+                    rewards[calcX][calcY] += (double) Math.min(taxicabDistance - brightness, 0);
                 }
             }
         }
+    }
+    private static void visualizeInitialGridWorld(Domain domain,
+                                                  BasicGridWorld gen, SimulatedEnvironment env) {
+        Visualizer v = gen.getVisualizer();
+        VisualExplorer exp = new VisualExplorer(domain, env, v);
+
+        exp.addKeyAction("w", BasicGridWorld.ACTIONNORTH);
+        exp.addKeyAction("s", BasicGridWorld.ACTIONSOUTH);
+        exp.addKeyAction("d", BasicGridWorld.ACTIONEAST);
+        exp.addKeyAction("a", BasicGridWorld.ACTIONWEST);
+
+        exp.initGUI();
+
     }
 
 }
