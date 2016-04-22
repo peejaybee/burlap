@@ -1,7 +1,5 @@
 package burlap.assignment4.util;
 
-import burlap.oomdp.core.values.DoubleArrayValue;
-
 import java.util.ArrayList;
 import java.util.List;
 
@@ -32,18 +30,31 @@ public final class AnalysisAggregator {
 		stepsToFinishQLearning.add(stepsToFinishQLearning1);
 	}
 	public static void printValueIterationResults(){
-		System.out.print("Value Iteration,");	
+		System.out.print("Value Iteration,");
 		printList(stepsToFinishValueIteration);
 	}
 	public static void printPolicyIterationResults(){
-		System.out.print("Policy Iteration,");	
+		System.out.print("Policy Iteration,");
 		printList(stepsToFinishPolicyIteration);
 	}
 	public static void printQLearningResults(){
-		System.out.print("Q Learning,");	
+		System.out.print("Q Learning,");
 		printList(stepsToFinishQLearning);
 	}
-	
+
+	public static void printValueIterationResultsLong(){
+		System.out.print("Value Iteration,");
+		printList(stepsToFinishValueIteration);
+	}
+	public static void printPolicyIterationResultsLong(){
+		System.out.print("Policy Iteration,");
+		printList(stepsToFinishPolicyIteration);
+	}
+	public static void printQLearningResultsLong(){
+		System.out.print("Q Learning,");
+		printList(stepsToFinishQLearning);
+	}
+
 
 	public static void addMillisecondsToFinishValueIteration(Integer millisecondsToFinishValueIteration1){
 		millisecondsToFinishValueIteration.add(millisecondsToFinishValueIteration1);
@@ -98,7 +109,7 @@ public final class AnalysisAggregator {
 	}
 	private static void printList(List<Integer> valueList){
 		int counter = 0;
-		for(int value : valueList){
+		for(long value : valueList){
 			System.out.print(String.valueOf(value));
 			if(counter != valueList.size()-1){
 				System.out.print(",");
@@ -107,6 +118,13 @@ public final class AnalysisAggregator {
 		}
 		System.out.println();
 	}
+	private static void printListLong(List<Integer> valueList, List<Integer> iterationList, String algorithm, String valueName){
+		int counter = 0;
+		for (int i = 0; i < iterationList.size(); i++){
+			System.out.println(iterationList.get(i) + "," + valueList.get(i) + "," + algorithm + "," + valueName);
+		}
+	}
+
 	private static void printDoubleList(List<Double> valueList){
 		int counter = 0;
 		for(double value : valueList){
@@ -118,6 +136,14 @@ public final class AnalysisAggregator {
 		}
 		System.out.println();
 	}
+
+	private static void printDoubleListLong(List<Double> valueList, List<Integer> iterationList, String algorithm, String valueName){
+		int counter = 0;
+		for (int i = 0; i < iterationList.size(); i++){
+			System.out.println(iterationList.get(i) + "," + valueList.get(i) + "," + algorithm + "," + valueName);
+		}
+	}
+
 	public static void printAggregateAnalysis(){
 		System.out.println("//Aggregate Analysis//\n");
 		System.out.println("The data below shows the number of steps/actions the agent required to reach \n"
@@ -140,5 +166,20 @@ public final class AnalysisAggregator {
 		printValueIterationRewards();
 		printPolicyIterationRewards();
 		printQLearningRewards();
+	}
+
+	public static void printAggregateAnalysisLongForm(){
+
+		System.out.println("iterations, value, algorithm, type");
+		printListLong(millisecondsToFinishValueIteration, numIterations, "VI", "msToOptimum" );
+		printListLong(millisecondsToFinishPolicyIteration, numIterations, "PI", "msToOptimum" );
+		printListLong(millisecondsToFinishQLearning, numIterations, "QL", "msToOptimum" );
+		printListLong(stepsToFinishValueIteration, numIterations, "VI", "stepsToOptimum" );
+		printListLong(stepsToFinishPolicyIteration, numIterations, "PI", "stepsToOptimum" );
+		printListLong(stepsToFinishQLearning, numIterations, "QL", "stepsToOptimum" );
+		printDoubleListLong(rewardsForValueIteration, numIterations, "VI", "totalReward");
+		printDoubleListLong(rewardsForPolicyIteration, numIterations, "PI", "totalReward");
+		printDoubleListLong(rewardsForQLearning, numIterations, "QL", "totalReward");
+
 	}
 }

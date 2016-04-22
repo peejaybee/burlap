@@ -27,10 +27,12 @@ public class AnalysisRunner {
 
 	private int MAX_ITERATIONS;
 	private int NUM_INTERVALS;
+	private double MAX_DELTA;
 
-	public AnalysisRunner(int MAX_ITERATIONS, int NUM_INTERVALS){
+	public AnalysisRunner(int MAX_ITERATIONS, int NUM_INTERVALS, double MAX_DELTA){
 		this.MAX_ITERATIONS = MAX_ITERATIONS;
 		this.NUM_INTERVALS = NUM_INTERVALS;
+		this.MAX_DELTA = MAX_DELTA;
 		
 		int increment = MAX_ITERATIONS/NUM_INTERVALS;
 		for(int numIterations = increment;numIterations<=MAX_ITERATIONS;numIterations+=increment ){
