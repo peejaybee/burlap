@@ -21,9 +21,9 @@ public class DizzyCommando {
     private static boolean visualizeInitialGridWorld = false; //Loads a GUI with the agent, walls, and goal
 
     //runValueIteration, runPolicyIteration, and runQLearning indicate which algorithms will run in the experiment
-    private static boolean runValueIteration = false;
+    private static boolean runValueIteration = true;
     private static boolean runPolicyIteration = true;
-    private static boolean runQLearning = false;
+    private static boolean runQLearning = true;
 
     //showValueIterationPolicyMap, showPolicyIterationPolicyMap, and showQLearningPolicyMap will open a GUI
     //you can use to visualize the policy maps. Consider only having one variable set to true at a time
@@ -34,8 +34,6 @@ public class DizzyCommando {
 
     private static Integer MAX_ITERATIONS = 100;
     private static Integer NUM_INTERVALS = 100;
-
-
 
     public static void main(String[] args) {
         int width = 15;
