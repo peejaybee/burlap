@@ -129,10 +129,17 @@ public class AnalysisRunner {
 		gui.initGUI();
 
 	}
-	
+
+
 	public void runQLearning(BasicGridWorld gen, Domain domain,
+							 State initialState, RewardFunction rf, TerminalFunction tf,
+							 SimulatedEnvironment env, boolean showPolicyMap) {
+		runQLearning(gen,domain,initialState,rf,tf,env,showPolicyMap, 0.1);
+	}
+
+		public void runQLearning(BasicGridWorld gen, Domain domain,
 			State initialState, RewardFunction rf, TerminalFunction tf,
-			SimulatedEnvironment env, boolean showPolicyMap) {
+			SimulatedEnvironment env, boolean showPolicyMap, double policyParam) {
 		System.out.println("//Q Learning Analysis//");
 
 		QLearning agent = null;
@@ -143,11 +150,11 @@ public class AnalysisRunner {
 			long startTime = System.nanoTime();
 
 			agent = new QLearning(
-				domain,
-				0.99,
-				hashingFactory,
-				0.99, 0.99);
-			
+					domain,
+					0.99,
+					hashingFactory,
+					0.99, 0.99,"epsilon",policyParam);
+
 			for (int i = 0; i < numIterations; i++) {
 				ea = agent.runLearningEpisode(env);
 				env.resetEnvironment();
@@ -159,9 +166,9 @@ public class AnalysisRunner {
 			AnalysisAggregator.addStepsToFinishQLearning(ea.numTimeSteps());
 
 		}
-		AnalysisAggregator.printQLearningResults();
-		MapPrinter.printPolicyMap(getAllStates(domain,rf,tf,initialState), p, gen.getMap());
-		System.out.println("\n\n");
+//		AnalysisAggregator.printQLearningResults();
+//		MapPrinter.printPolicyMap(getAllStates(domain,rf,tf,initialState), p, gen.getMap());
+//		System.out.println("\n\n");
 
 		//visualize the value function and policy.
 		if(showPolicyMap){

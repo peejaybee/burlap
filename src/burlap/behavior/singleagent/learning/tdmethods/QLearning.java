@@ -2,9 +2,7 @@ package burlap.behavior.singleagent.learning.tdmethods;
 
 import burlap.behavior.learningrate.ConstantLR;
 import burlap.behavior.learningrate.LearningRate;
-import burlap.behavior.policy.EpsilonGreedy;
-import burlap.behavior.policy.GreedyQPolicy;
-import burlap.behavior.policy.Policy;
+import burlap.behavior.policy.*;
 import burlap.behavior.singleagent.EpisodeAnalysis;
 import burlap.behavior.singleagent.MDPSolver;
 import burlap.behavior.singleagent.learning.LearningAgent;
@@ -148,6 +146,26 @@ public class QLearning extends MDPSolver implements QFunction, LearningAgent, Pl
 	public QLearning(Domain domain, double gamma, HashableStateFactory hashingFactory,
 			double qInit, double learningRate) {
 		this.QLInit(domain, gamma, hashingFactory, new ValueFunctionInitialization.ConstantValueFunctionInitialization(qInit), learningRate, new EpsilonGreedy(this, 0.1), Integer.MAX_VALUE);
+	}
+
+	public QLearning(Domain domain, double gamma, HashableStateFactory hashingFactory,
+					 double qInit, double learningRate, String policyName, double policyParam) {
+		Policy policy;
+		switch (policyName) {
+			case "boltzmann":
+				policy = new BoltzmannQPolicy(this, policyParam);
+				break;
+			case "epsilon":
+				policy = new EpsilonGreedy(this, policyParam);
+				break;
+			case "deterministic":
+				policy = new GreedyDeterministicQPolicy(this);
+				break;
+			default:
+				policy = new EpsilonGreedy(this, policyParam);
+				break;
+		}
+		this.QLInit(domain, gamma, hashingFactory, new ValueFunctionInitialization.ConstantValueFunctionInitialization(qInit), learningRate, policy, Integer.MAX_VALUE);
 	}
 
 

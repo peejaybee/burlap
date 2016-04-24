@@ -38,6 +38,7 @@ public class EpsilonGreedy extends Policy implements SolverDerivedPolicy {
 		qplanner = null;
 		this.epsilon = epsilon;
 		rand = RandomFactory.getMapped(0);
+		System.out.println("NEW EpsilonGreedy" + epsilon);
 	}
 	
 	/**
@@ -49,6 +50,7 @@ public class EpsilonGreedy extends Policy implements SolverDerivedPolicy {
 		qplanner = planner;
 		this.epsilon = epsilon;
 		rand = RandomFactory.getMapped(0);
+		System.out.println("NEW EpsilonGreedy" + epsilon);
 	}
 
 	
@@ -87,6 +89,7 @@ public class EpsilonGreedy extends Policy implements SolverDerivedPolicy {
 		
 		double roll = rand.nextDouble();
 		if(roll <= epsilon){
+			System.out.println("Rolled: " + roll + " epsilon: " + epsilon);
 			int selected = rand.nextInt(qValues.size());
 			AbstractGroundedAction ga = qValues.get(selected).a;
 			return AbstractObjectParameterizedGroundedAction.Helper.translateParameters(ga, qValues.get(selected).s, s);

@@ -21,9 +21,9 @@ public class DizzyCommando {
     private static boolean visualizeInitialGridWorld = false; //Loads a GUI with the agent, walls, and goal
 
     //runValueIteration, runPolicyIteration, and runQLearning indicate which algorithms will run in the experiment
-    private static boolean runValueIteration = true;
+    private static boolean runValueIteration = false;
     private static boolean runPolicyIteration = true;
-    private static boolean runQLearning = true;
+    private static boolean runQLearning = false;
 
     //showValueIterationPolicyMap, showPolicyIterationPolicyMap, and showQLearningPolicyMap will open a GUI
     //you can use to visualize the policy maps. Consider only having one variable set to true at a time
@@ -34,6 +34,8 @@ public class DizzyCommando {
 
     private static Integer MAX_ITERATIONS = 100;
     private static Integer NUM_INTERVALS = 100;
+
+
 
     public static void main(String[] args) {
         int width = 15;
@@ -54,9 +56,9 @@ public class DizzyCommando {
         State initialState = BasicGridWorld.getExampleState(domain);
 
         GridWorldRewardFunction rf = new GridWorldRewardFunction(width, height, -1);
-        placeLightAt(rf, 7, 7, 4);
-        placeLightAt(rf, 0, 14, 4);
-        placeLightAt(rf, 14, 0, 4);
+        placeLightAt(rf, 7, 7, 5);
+        placeLightAt(rf, 0, 14, 5);
+        placeLightAt(rf, 14, 0, 5);
 
         TerminalFunction tf = new BasicTerminalFunction(maxX,maxY); //Goal is at the top right grid
 

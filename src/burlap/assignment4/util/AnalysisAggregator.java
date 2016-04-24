@@ -119,9 +119,14 @@ public final class AnalysisAggregator {
 		System.out.println();
 	}
 	private static void printListLong(List<Integer> valueList, List<Integer> iterationList, String algorithm, String valueName){
-		int counter = 0;
 		for (int i = 0; i < iterationList.size(); i++){
 			System.out.println(iterationList.get(i) + "," + valueList.get(i) + "," + algorithm + "," + valueName);
+		}
+	}
+
+	private static void printListLong(List<Integer> valueList, List<Integer> iterationList, String algorithm, String valueName, String tag){
+		for (int i = 0; i < iterationList.size(); i++){
+			System.out.println(iterationList.get(i) + "," + valueList.get(i) + "," + algorithm + "," + valueName + "," + tag);
 		}
 	}
 
@@ -137,8 +142,13 @@ public final class AnalysisAggregator {
 		System.out.println();
 	}
 
+	private static void printDoubleListLong(List<Double> valueList, List<Integer> iterationList, String algorithm, String valueName, String tag){
+		for (int i = 0; i < iterationList.size(); i++){
+			System.out.println(iterationList.get(i) + "," + valueList.get(i) + "," + algorithm + "," + valueName + "," + tag);
+		}
+	}
+
 	private static void printDoubleListLong(List<Double> valueList, List<Integer> iterationList, String algorithm, String valueName){
-		int counter = 0;
 		for (int i = 0; i < iterationList.size(); i++){
 			System.out.println(iterationList.get(i) + "," + valueList.get(i) + "," + algorithm + "," + valueName);
 		}
@@ -168,18 +178,45 @@ public final class AnalysisAggregator {
 		printQLearningRewards();
 	}
 
-	public static void printAggregateAnalysisLongForm(){
+	public static void printAggregateAnalysisLongForm() {
 
 		System.out.println("iterations, value, algorithm, type");
-		printListLong(millisecondsToFinishValueIteration, numIterations, "VI", "msToOptimum" );
-		printListLong(millisecondsToFinishPolicyIteration, numIterations, "PI", "msToOptimum" );
-		printListLong(millisecondsToFinishQLearning, numIterations, "QL", "msToOptimum" );
-		printListLong(stepsToFinishValueIteration, numIterations, "VI", "stepsToOptimum" );
-		printListLong(stepsToFinishPolicyIteration, numIterations, "PI", "stepsToOptimum" );
-		printListLong(stepsToFinishQLearning, numIterations, "QL", "stepsToOptimum" );
-		printDoubleListLong(rewardsForValueIteration, numIterations, "VI", "totalReward");
-		printDoubleListLong(rewardsForPolicyIteration, numIterations, "PI", "totalReward");
-		printDoubleListLong(rewardsForQLearning, numIterations, "QL", "totalReward");
+		if (millisecondsToFinishValueIteration.size() > 0) {
+			printListLong(millisecondsToFinishValueIteration, numIterations, "VI", "msToOptimum");
+			printListLong(stepsToFinishValueIteration, numIterations, "VI", "stepsToOptimum");
+			printDoubleListLong(rewardsForValueIteration, numIterations, "VI", "totalReward");
+		}
+		if (millisecondsToFinishPolicyIteration.size() > 0) {
+			printListLong(millisecondsToFinishPolicyIteration, numIterations, "VI", "msToOptimum");
+			printListLong(stepsToFinishPolicyIteration, numIterations, "VI", "stepsToOptimum");
+			printDoubleListLong(rewardsForPolicyIteration, numIterations, "VI", "totalReward");
 
+		}
+		if (millisecondsToFinishQLearning.size() > 0) {
+			printListLong(millisecondsToFinishQLearning, numIterations, "QL", "msToOptimum");
+			printListLong(stepsToFinishQLearning, numIterations, "QL", "stepsToOptimum");
+			printDoubleListLong(rewardsForQLearning, numIterations, "QL", "totalReward");
+		}
+	}
+
+	public static void printAggregateAnalysisLongForm(String tag) {
+
+		System.out.println("iterations, value, algorithm, type, tag");
+		if (millisecondsToFinishValueIteration.size() > 0) {
+			printListLong(millisecondsToFinishValueIteration, numIterations, "VI", "msToOptimum", tag);
+			printListLong(stepsToFinishValueIteration, numIterations, "VI", "stepsToOptimum", tag);
+			printDoubleListLong(rewardsForValueIteration, numIterations, "VI", "totalReward", tag);
+		}
+		if (millisecondsToFinishPolicyIteration.size() > 0) {
+			printListLong(millisecondsToFinishPolicyIteration, numIterations, "VI", "msToOptimum", tag);
+			printListLong(stepsToFinishPolicyIteration, numIterations, "VI", "stepsToOptimum", tag);
+			printDoubleListLong(rewardsForPolicyIteration, numIterations, "VI", "totalReward", tag);
+
+		}
+		if (millisecondsToFinishQLearning.size() > 0) {
+			printListLong(millisecondsToFinishQLearning, numIterations, "QL", "msToOptimum", tag);
+			printListLong(stepsToFinishQLearning, numIterations, "QL", "stepsToOptimum", tag);
+			printDoubleListLong(rewardsForQLearning, numIterations, "QL", "totalReward", tag);
+		}
 	}
 }
