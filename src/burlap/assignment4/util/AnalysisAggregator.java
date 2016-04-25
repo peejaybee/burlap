@@ -119,24 +119,17 @@ public final class AnalysisAggregator {
 		System.out.println();
 	}
 	private static void printListLong(List<Integer> valueList, List<Integer> iterationList, String algorithm, String valueName){
-<<<<<<< HEAD
-=======
-		int counter = 0;
->>>>>>> ac500841eeb87df0ec3672c64ffec3c2345c36a3
 		for (int i = 0; i < iterationList.size(); i++){
 			System.out.println(iterationList.get(i) + "," + valueList.get(i) + "," + algorithm + "," + valueName);
 		}
 	}
 
-<<<<<<< HEAD
 	private static void printListLong(List<Integer> valueList, List<Integer> iterationList, String algorithm, String valueName, String tag){
 		for (int i = 0; i < iterationList.size(); i++){
 			System.out.println(iterationList.get(i) + "," + valueList.get(i) + "," + algorithm + "," + valueName + "," + tag);
 		}
 	}
 
-=======
->>>>>>> ac500841eeb87df0ec3672c64ffec3c2345c36a3
 	private static void printDoubleList(List<Double> valueList){
 		int counter = 0;
 		for(double value : valueList){
@@ -149,7 +142,6 @@ public final class AnalysisAggregator {
 		System.out.println();
 	}
 
-<<<<<<< HEAD
 	private static void printDoubleListLong(List<Double> valueList, List<Integer> iterationList, String algorithm, String valueName, String tag){
 		for (int i = 0; i < iterationList.size(); i++){
 			System.out.println(iterationList.get(i) + "," + valueList.get(i) + "," + algorithm + "," + valueName + "," + tag);
@@ -157,10 +149,6 @@ public final class AnalysisAggregator {
 	}
 
 	private static void printDoubleListLong(List<Double> valueList, List<Integer> iterationList, String algorithm, String valueName){
-=======
-	private static void printDoubleListLong(List<Double> valueList, List<Integer> iterationList, String algorithm, String valueName){
-		int counter = 0;
->>>>>>> ac500841eeb87df0ec3672c64ffec3c2345c36a3
 		for (int i = 0; i < iterationList.size(); i++){
 			System.out.println(iterationList.get(i) + "," + valueList.get(i) + "," + algorithm + "," + valueName);
 		}
@@ -190,7 +178,6 @@ public final class AnalysisAggregator {
 		printQLearningRewards();
 	}
 
-<<<<<<< HEAD
 	public static void printAggregateAnalysisLongForm() {
 
 		System.out.println("iterations, value, algorithm, type");
@@ -231,20 +218,21 @@ public final class AnalysisAggregator {
 			printListLong(stepsToFinishQLearning, numIterations, "QL", "stepsToOptimum", tag);
 			printDoubleListLong(rewardsForQLearning, numIterations, "QL", "totalReward", tag);
 		}
-=======
-	public static void printAggregateAnalysisLongForm(){
+	}
 
-		System.out.println("iterations, value, algorithm, type");
-		printListLong(millisecondsToFinishValueIteration, numIterations, "VI", "msToOptimum" );
-		printListLong(millisecondsToFinishPolicyIteration, numIterations, "PI", "msToOptimum" );
-		printListLong(millisecondsToFinishQLearning, numIterations, "QL", "msToOptimum" );
-		printListLong(stepsToFinishValueIteration, numIterations, "VI", "stepsToOptimum" );
-		printListLong(stepsToFinishPolicyIteration, numIterations, "PI", "stepsToOptimum" );
-		printListLong(stepsToFinishQLearning, numIterations, "QL", "stepsToOptimum" );
-		printDoubleListLong(rewardsForValueIteration, numIterations, "VI", "totalReward");
-		printDoubleListLong(rewardsForPolicyIteration, numIterations, "PI", "totalReward");
-		printDoubleListLong(rewardsForQLearning, numIterations, "QL", "totalReward");
+	public static void reinitialize(){
+		numIterations = new ArrayList<Integer>();
+		stepsToFinishValueIteration = new ArrayList<Integer>();
+		stepsToFinishPolicyIteration = new ArrayList<Integer>();
+		stepsToFinishQLearning = new ArrayList<Integer>();
 
->>>>>>> ac500841eeb87df0ec3672c64ffec3c2345c36a3
+		millisecondsToFinishValueIteration = new ArrayList<Integer>();
+		millisecondsToFinishPolicyIteration = new ArrayList<Integer>();
+		millisecondsToFinishQLearning = new ArrayList<Integer>();
+
+		rewardsForValueIteration = new ArrayList<Double>();
+		rewardsForPolicyIteration = new ArrayList<Double>();
+		rewardsForQLearning = new ArrayList<Double>();
+
 	}
 }

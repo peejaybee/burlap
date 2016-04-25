@@ -19,8 +19,8 @@ public class DizzyCommandoLooper {
 
     private static boolean showQLearningPolicyMap = false;
 
-    private static Integer MAX_ITERATIONS = 10;
-    private static Integer NUM_INTERVALS = 10;
+    private static Integer MAX_ITERATIONS = 100;
+    private static Integer NUM_INTERVALS = 100;
 
 
 
@@ -28,8 +28,8 @@ public class DizzyCommandoLooper {
         int width = 15;
         int height = 15;
 
-//        Double[] epsilons = {0.1, 0.2, 0.3, 0.4, 1.0};
-        Double[] epsilons = {0.1, 0.2};
+        Double[] epsilons = {0.05, 0.1, 0.2, 0.3, 0.4};
+//        Double[] epsilons = {0.1, 0.2};
 
         int [][] userMap = new int[width][height];
         for (int[] row: userMap) {
@@ -55,9 +55,9 @@ public class DizzyCommandoLooper {
         SimulatedEnvironment env = new SimulatedEnvironment(domain, rf, tf,
                 initialState);
 
-        AnalysisRunner runner = new AnalysisRunner(MAX_ITERATIONS,NUM_INTERVALS, -1);
 
         for (Double epsilon: epsilons) {
+            AnalysisRunner runner = new AnalysisRunner(MAX_ITERATIONS,NUM_INTERVALS, -1);
             long startTime = System.nanoTime();
 
             runner.runQLearning(gen, domain, initialState, rf, tf, env, showQLearningPolicyMap, epsilon);
@@ -65,7 +65,8 @@ public class DizzyCommandoLooper {
 
 //            System.out.println("Q learning clock time: " + (qlTime - startTime));
 
-//            AnalysisAggregator.printAggregateAnalysisLongForm(epsilon.toString());
+            AnalysisAggregator.printAggregateAnalysisLongForm(epsilon.toString());
+            AnalysisAggregator.reinitialize();
         }
     }
 
